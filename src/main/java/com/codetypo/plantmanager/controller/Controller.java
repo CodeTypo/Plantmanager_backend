@@ -6,9 +6,11 @@ import com.codetypo.plantmanager.entity.Plant;
 import com.codetypo.plantmanager.entity.User;
 import com.codetypo.plantmanager.repository.PlantRepo;
 import com.codetypo.plantmanager.repository.UserRepo;
+import com.codetypo.plantmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.Optional;
 @RestController
 public class Controller {
 
+    @Autowired
+    private UserService userService;
     @Autowired
     private UserRepo userRepo;
     @Autowired
@@ -30,11 +34,41 @@ public class Controller {
         return userRepo.findAll();
     }
 
+    @PostMapping("/users")
+    public ResponseEntity<User> loginUser(@RequestBody LoginForm loginForm){
+        User user = null;
+        boolean log = false;
+        try {
+            user = userRepo.findUserByEmail(loginForm.getEmail());
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        if (user != null){
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+            log = encoder.matches(loginForm.getPassword(), user.getPassword());
+            if (log){
+                return new ResponseEntity<User>(user, HttpStatus.OK);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+        }else {
+            return new ResponseEntity<User>(user, HttpStatus.NOT_FOUND);
+        }
+
+    }
+
     @PostMapping("/addUser")
     //Works with POSTMAN only so far
-    public User addUser (@RequestBody UserPutRequest request){
-        return userRepo.save(request.getUser());
+    public User addUser (@RequestBody User user){
+        return userService.createUser(user);
     }
+
+
 
 
 
