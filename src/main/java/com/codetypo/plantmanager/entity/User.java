@@ -21,9 +21,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String nickname;
-    private String login;
+
+    private String fname;
+
+    private String lname;
+    private String email;
     private String password;
+    private Role role;
 
     //Relation of type One to Many: One User can have many Plants, a plant belongs to a single user only
     @OneToMany(targetEntity = Plant.class, cascade = CascadeType.ALL)
