@@ -1,13 +1,17 @@
 package com.codetypo.plantmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -16,11 +20,11 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 //A class representing a table of registered users , so far only a few parameters are added
-public class User {
+public class User extends AuditModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String fname;
 
@@ -30,8 +34,11 @@ public class User {
     private Role role;
 
     //Relation of type One to Many: One User can have many Plants, a plant belongs to a single user only
-    @OneToMany(targetEntity = Plant.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "up_fk", referencedColumnName = "id")
+    @OneToMany(mappedBy = "user", cascade = {
+            CascadeType.ALL
+    })
+    @JsonIgnore
+//    @JoinColumn(name = "owner_id)
     private List<Plant> plants;
 
 }
