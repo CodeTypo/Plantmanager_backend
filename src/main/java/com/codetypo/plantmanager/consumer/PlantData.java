@@ -3,10 +3,11 @@ package com.codetypo.plantmanager.consumer;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-@lombok.Data
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Data {
+public class PlantData {
     @JsonProperty("common_name")
     private String commonName;
     @JsonProperty("image_url")
