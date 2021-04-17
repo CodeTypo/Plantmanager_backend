@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,6 +21,7 @@ import java.util.Set;
 @ToString
 @Entity
 @Table(name = "users")
+@Indexed
 //A class representing a table of registered users , so far only a few parameters are added
 public class User extends AuditModel {
 
@@ -26,8 +29,9 @@ public class User extends AuditModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @FullTextField(name = "firstName")
     private String fname;
-
+    @FullTextField(name = "lastName")
     private String lname;
     private String email;
     private String password;
@@ -38,7 +42,6 @@ public class User extends AuditModel {
             CascadeType.ALL
     })
     @JsonIgnore
-//    @JoinColumn(name = "owner_id)
     private List<Plant> plants;
 
 }

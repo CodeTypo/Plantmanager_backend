@@ -1,34 +1,27 @@
 package com.codetypo.plantmanager.controller;
 
-import com.codetypo.plantmanager.dto.PlantPutRequest;
-import com.codetypo.plantmanager.dto.UserPutRequest;
 import com.codetypo.plantmanager.entity.Plant;
 import com.codetypo.plantmanager.entity.User;
 import com.codetypo.plantmanager.repository.PlantRepo;
 import com.codetypo.plantmanager.repository.UserRepo;
 import com.codetypo.plantmanager.service.UserService;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = {"http://localhost:3000", "https://mars-low.github.io"}, maxAge = 3600)
 @RestController
+@Data
 public class Controller {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserRepo userRepo;
-    @Autowired
-    private PlantRepo plantRepo;
+    private final UserService userService;
+    private final UserRepo userRepo;
+    private final PlantRepo plantRepo;
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ USER mapping methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -93,42 +86,19 @@ public class Controller {
         return userService.createUser(user);
     }
 
-
-
-//    @DeleteMapping("/instructors/{id}")
-//    public Map < String, Boolean > deleteUser(
-//            @PathVariable(value = "id") Long instructorId) throws ResourceNotFoundException {
-//        Instructor instructor = instructorRepository.findById(instructorId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Instructor not found :: " + instructorId));
-//
-//        instructorRepository.delete(instructor);
-//        Map < String, Boolean > response = new HashMap < > ();
-//        response.put("deleted", Boolean.TRUE);
-//        return response;
-//    }
-
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PLANTS mapping methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //Get all
-//    @GetMapping("/plants")
-//    public List<Plant> getAllPlants() {
-//        return plantRepo.findAll();
-//    }
-
     @GetMapping("/users/{userId}/plants")
     public List<Plant> getPlantsByUser(@PathVariable Long userId){
         return plantRepo.findByUserId(userId);
     }
 
-    @GetMapping("/users/{userId}/plants/{plantId}")
-    public Plant getPlant(@PathVariable Long userId,
-                                         @PathVariable Long plantId)
-            throws ResourceNotFoundException {
-        return plantRepo.findByIdAndUserId(plantId,userId).orElseThrow(() -> new ResourceNotFoundException(
-                "Plant not found with id " + plantId + " and userId " + userId
-        ));
-    }
+//    @GetMapping("/users/{userId}/plants/{plantId}")
+//    public Plant getPlant(@PathVariable Long userId,
+//                                         @PathVariable Long plantId)
+//            throws ResourceNotFoundException {
+//        return plantRepo.findByIdAndUserId(plantId,userId).orElseThrow(() -> new ResourceNotFoundException(
+//                "Plant not found with id " + plantId + " and userId " + userId
+//        ));
+//    }
 
     @PostMapping("/users/{userId}/plants")
     public Plant createPlant(@PathVariable Long userId,
@@ -139,20 +109,20 @@ public class Controller {
         }).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    @PutMapping("/users/{userId}/plants/{plantId}")
-    public Plant updatePlant(@PathVariable Long userId,
-                             @PathVariable Long plantId,
-                             @RequestBody Plant plantRequest) throws ResourceNotFoundException {
-        if (!userRepo.existsById(userId)) {
-            throw new ResourceNotFoundException("User not found");
-        }
-
-        return plantRepo.findById(plantId).map(plant -> {
-            plant.setName(plantRequest.getName());
-            plant.setDescription(plantRequest.getDescription());
-            return plantRepo.save(plant);
-        }).orElseThrow(() -> new ResourceNotFoundException("Plant not found"));
-    }
+//    @PutMapping("/users/{userId}/plants/{plantId}")
+//    public Plant updatePlant(@PathVariable Long userId,
+//                             @PathVariable Long plantId,
+//                             @RequestBody Plant plantRequest) throws ResourceNotFoundException {
+//        if (!userRepo.existsById(userId)) {
+//            throw new ResourceNotFoundException("User not found");
+//        }
+//
+//        return plantRepo.findById(plantId).map(plant -> {
+//            plant.setName(plantRequest.getName());
+//            plant.setDescription(plantRequest.getDescription());
+//            return plantRepo.save(plant);
+//        }).orElseThrow(() -> new ResourceNotFoundException("Plant not found"));
+//    }
 
 
     @DeleteMapping("/users/{userId}/plants/{plantId}")
@@ -167,39 +137,4 @@ public class Controller {
         ));
     }
 
-
-
-//    //Get the one with specified id
-//    @GetMapping("/plants/{id}")
-//    public Optional<Plant> getPlant(@PathVariable Long id) {
-//        return plantRepo.findById(id);
-//    }
-//
-//    @DeleteMapping("/plants/{id}")
-//    public ResponseEntity<Void> deletePlant(@PathVariable Long id){
-//        int identifier = plantRepo.deletePlantById(id);
-//        return identifier!=-1? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
-//    }
-//
-//    //Add new plant, returns Plant JSON object
-//    //Works with POSTMAN only so far
-////    @PostMapping("users/{id}/plants")
-////    public ResponseEntity<Plant> createPlant(@RequestBody Plant plant){
-////        plantRepo.save(plant);
-////        return new ResponseEntity<Plant>(plant, HttpStatus.OK);
-////    }
-//
-//
-//    //Update an existing plant
-//    @PutMapping("/plants/{id}")
-//    public ResponseEntity<Plant> updatePlant(@Validated @PathVariable Long id, @RequestBody Plant plant){
-//        Optional<Plant> p = plantRepo.findById(id);
-//        Plant plantToUpdate = p.get();
-//        plantToUpdate.setName(plant.getName());
-//        plantToUpdate.setDescription(plant.getDescription());
-//        plantToUpdate.setMeasured_humidity(plant.getMeasured_humidity());
-//
-//        final Plant updatedPlant = plantRepo.save(plantToUpdate);
-//        return new ResponseEntity<Plant>(updatedPlant, HttpStatus.OK);
-//    }
 }
