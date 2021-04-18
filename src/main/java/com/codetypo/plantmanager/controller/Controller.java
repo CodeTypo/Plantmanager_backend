@@ -100,14 +100,14 @@ public class Controller {
 //        ));
 //    }
 
-    @PostMapping("/users/{userId}/plants")
-    public Plant createPlant(@PathVariable Long userId,
-                             @RequestBody Plant plant) throws ResourceNotFoundException {
-        return userRepo.findById(userId).map(user -> {
-            plant.setUser(user);
-            return plantRepo.save(plant);
-        }).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
+//    @PostMapping("/users/{userId}/plants")
+//    public Plant createPlant(@PathVariable Long userId,
+//                             @RequestBody Plant plant) throws ResourceNotFoundException {
+//        return userRepo.findById(userId).map(user -> {
+//            plant.setUser(user);
+//            return plantRepo.save(plant);
+//        }).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//    }
 
 //    @PutMapping("/users/{userId}/plants/{plantId}")
 //    public Plant updatePlant(@PathVariable Long userId,
@@ -125,16 +125,16 @@ public class Controller {
 //    }
 
 
-    @DeleteMapping("/users/{userId}/plants/{plantId}")
-    public ResponseEntity<?> deletePlant(@PathVariable Long userId,
-                                         @PathVariable Long plantId)
-        throws ResourceNotFoundException {
-        return plantRepo.findByIdAndUserId(plantId,userId).map(plant -> {
-            plantRepo.delete(plant);
-            return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException(
-                "Plant not found with id " + plantId + " and userId " + userId
-        ));
-    }
+//    @DeleteMapping("/users/{userId}/plants/{plantId}")
+//    public ResponseEntity<?> deletePlant(@PathVariable Long userId,
+//                                         @PathVariable Long plantId)
+//        throws ResourceNotFoundException {
+//        return plantRepo.findByIdAndUserId(plantId,userId).map(plant -> {
+//            plantRepo.delete(plant);
+//            return ResponseEntity.ok().build();
+//        }).orElseThrow(() -> new ResourceNotFoundException(
+//                "Plant not found with id " + plantId + " and userId " + userId
+//        ));
+//    }
 
 }

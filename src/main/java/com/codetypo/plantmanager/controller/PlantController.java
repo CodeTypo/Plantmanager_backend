@@ -2,6 +2,7 @@ package com.codetypo.plantmanager.controller;
 
 import com.codetypo.plantmanager.entity.Plant;
 import com.codetypo.plantmanager.repository.PlantRepo;
+import com.codetypo.plantmanager.repository.UserRepo;
 import com.codetypo.plantmanager.search.SearchService;
 import lombok.Data;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ public class PlantController {
 
     private final PlantRepo plantRepo;
     private final SearchService searchService;
+    private final UserRepo userRepo;
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PLANTS mapping methods ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -42,19 +44,40 @@ public class PlantController {
         return plantRepo.findById(id).get();
     }
 
-    @DeleteMapping("/plants/{id}")
-    public ResponseEntity<Void> deletePlant(@PathVariable Long id){
-        int identifier = plantRepo.deletePlantById(id);
-        return identifier!=-1? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    @PostMapping("/users/{userId}/plants")
+    public Plant createPlant(@PathVariable Long userId,
+                             @RequestBody Plant plant) throws ResourceNotFoundException {
+        return userRepo.findById(userId).map(user -> {
+            plant.setUser(user);
+            return plantRepo.save(plant);
+        }).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
+
+    @DeleteMapping("/users/{userId}/plants/{plantId}")
+    public ResponseEntity<?> deletePlant(@PathVariable Long userId,
+                                         @PathVariable Long plantId)
+            throws ResourceNotFoundException {
+        return plantRepo.findByIdAndUserId(plantId,userId).map(plant -> {
+            plantRepo.delete(plant);
+            return ResponseEntity.ok().build();
+        }).orElseThrow(() -> new ResourceNotFoundException(
+                "Plant not found with id " + plantId + " and userId " + userId
+        ));
+    }
+
+//    @DeleteMapping("/plants/{id}")
+//    public ResponseEntity<Void> deletePlant(@PathVariable Long id){
+//        int identifier = plantRepo.deletePlantById(id);
+//        return identifier!=-1? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+//    }
 
     //Add new plant, returns Plant JSON object
     //Works with POSTMAN only so far
-    @PostMapping("users/{id}/plants")
-    public ResponseEntity<Plant> createPlant(@RequestBody Plant plant){
-        plantRepo.save(plant);
-        return new ResponseEntity<Plant>(plant, HttpStatus.OK);
-    }
+//    @PostMapping("users/{id}/plants")
+//    public ResponseEntity<Plant> createPlant(@RequestBody Plant plant){
+//        plantRepo.save(plant);
+//        return new ResponseEntity<Plant>(plant, HttpStatus.OK);
+//    }
 
 
     //Update an existing plant
