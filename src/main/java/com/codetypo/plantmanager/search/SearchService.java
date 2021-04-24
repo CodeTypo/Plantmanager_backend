@@ -21,10 +21,14 @@ public class SearchService {
         SearchSession searchSession = Search.session(entityManager);
 
         SearchResult<Plant> result = searchSession.search( Plant.class )
-                .where( f -> f.match()
-                .field("name")
-                .matching(word))
-                .fetch(6);
+                    .where(f -> f.wildcard()
+                    .field("name")
+                    .matching(word+"*"))
+                    .fetch(6);
+//                .where( f -> f.match()
+//                .field("name")
+//                .matching(word+"*"))
+//                .fetch(6);
 
         long totalHitCount = result.total().hitCount();
         List<Plant> hits = result.hits();
