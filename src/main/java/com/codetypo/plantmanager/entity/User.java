@@ -36,6 +36,8 @@ public class User extends AuditModel {
     private String email;
     private String password;
     private Role role;
+    @OneToOne
+    private Image avatar;
 
     //Relation of type One to Many: One User can have many Plants, a plant belongs to a single user only
     @OneToMany(mappedBy = "user", cascade = {
