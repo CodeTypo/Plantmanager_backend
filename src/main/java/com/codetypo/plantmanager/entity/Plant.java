@@ -1,5 +1,6 @@
 package com.codetypo.plantmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -31,4 +33,10 @@ public class Plant extends AuditModel{
     @JoinColumn(name = "owner_id")
     @IndexedEmbedded
     private User user;
+
+    @OneToMany(mappedBy = "plant", cascade = {
+            CascadeType.ALL
+    })
+    @JsonIgnore
+    private List<Measurement> measurements;
 }
