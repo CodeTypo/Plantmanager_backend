@@ -1,7 +1,9 @@
 package com.codetypo.plantmanager.controller;
 
 import com.codetypo.plantmanager.entity.Image;
-import com.codetypo.plantmanager.repository.ImageRepo;
+
+import com.codetypo.plantmanager.entity.PlantImage;
+import com.codetypo.plantmanager.repository.PlantImageRepo;
 import lombok.Data;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -13,26 +15,26 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Data
 @RestController
-public class ImageController {
-    private final ImageRepo imageRepo;
+public class PlantImageController {
+    private final PlantImageRepo imageRepo;
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/image/{userId}")
+    @PostMapping("/image/plant/{userId}")
     Long uploadImage(@RequestParam MultipartFile multipartImage, @PathVariable Long userId) throws Exception {
-        Image dbImage = new Image(userId);
+        PlantImage dbImage = new PlantImage(userId);
         dbImage.setContent(multipartImage.getBytes());
 
         try {
-            imageRepo.deleteByUserId(userId);
+            imageRepo.deleteByPlantId(userId);
         } catch (Exception ignored) {ignored.printStackTrace();}
         return imageRepo.save(dbImage)
                 .getId();
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/image/{imageId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/image/plant/{imageId}", produces = MediaType.IMAGE_JPEG_VALUE)
     Resource downloadImage(@PathVariable Long imageId) {
-        byte[] image = imageRepo.findByUserId(imageId)
+        byte[] image = imageRepo.findByPlantId(imageId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
                 .getContent();
         System.out.println(image);

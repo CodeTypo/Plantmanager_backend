@@ -8,16 +8,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import java.sql.SQLException;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Image {
+public class PlantImage {
 
-    public Image(long userId){
-        this.userId = userId;
+    public PlantImage(long plantId){
+        this.plantId = plantId;
     }
 
     @Id
@@ -26,5 +25,5 @@ public class Image {
     @Lob
     private byte[] content;
 
-    private Long userId;
+    private Long plantId;
 }
